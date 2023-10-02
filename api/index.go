@@ -1,20 +1,37 @@
 
-package handler
+package main
 
 import (
 	"fmt"
     "net/http"
-    "github.com/gorilla/mux"
+	"strconv"
+	"github.com/gorilla/mux"
 )
 
-func Greet(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "<h3>Hello World! <p>He's alive! Alive!</p></h3>")
-  }
-  
-  
-  func Main() {
+
+func ArthematicHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	a,_ := strconv.Atoi(vars["a"])
+	b,_ := strconv.Atoi(vars["b"])
+	fmt.Fprintf(w,"Addition: "+strconv.Itoa(Add(a,b))+"\nSubtraction: "+strconv.Itoa(Subract(a,b))+"\nMutiply: "+strconv.Itoa(Multiply(a,b)))
+}
+func UniversalHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w,`Hello World! \nUse "<URL>/<number>/<number>" to get the add,subtract and mutiplication of the numbers `)
+}
+
+
+func Add(a int,b int)int {
+	return a+b
+}
+func Subract(a int,b int)int{
+	return a-b
+}
+func Multiply(a int,b int)int{
+	return a*b
+}
+func main() {
 	  r := mux.NewRouter()
-	  r.HandleFunc("/", Greet).Methods("GET")
-  
-	  http.ListenAndServe(":8080", r)
-  }
+	  r.HandleFunc("/",UniversalHandler).Methods("GET")
+	  r.HandleFunc("/{a}/{b}",ArthematicHandler).Methods("GET") 
+	  http.ListenAndServe(":8080",r)
+}
